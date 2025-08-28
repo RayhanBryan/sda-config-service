@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="primary" dark prominent>
+  <v-app-bar color="primary" prominent>
     <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
     <v-toolbar-title @click="router.push('/')" class="cursor-pointer">
       SDA Configuration Service

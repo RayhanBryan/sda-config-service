@@ -47,7 +47,7 @@
 
             <v-row class="mt-6">
               <v-col cols="12" md="4">
-                <v-card color="primary" dark>
+                <v-card color="primary" class="pastel-border">
                   <v-card-title>
                     <v-icon left>mdi-vuejs</v-icon>
                     Vue.js
@@ -60,7 +60,7 @@
               </v-col>
 
               <v-col cols="12" md="4">
-                <v-card color="success" dark>
+                <v-card color="success" class="pastel-border">
                   <v-card-title>
                     <v-icon left>mdi-material-design</v-icon>
                     Vuetify
@@ -72,7 +72,7 @@
               </v-col>
 
               <v-col cols="12" md="4">
-                <v-card color="orange" dark>
+                <v-card color="warning" class="pastel-border">
                   <v-card-title>
                     <v-icon left>mdi-lightning-bolt</v-icon>
                     Vite
