@@ -5,8 +5,8 @@
       <v-list>
         <v-list-item
           :prepend-avatar="currentUser?.avatar"
-          :title="currentUser?.name || 'User'"
-          :subtitle="currentUser?.email || 'No email'"
+          :title="currentUser?.name || 'Pengguna'"
+          :subtitle="currentUser?.email || 'Tidak ada email'"
         ></v-list-item>
       </v-list>
 
@@ -28,7 +28,7 @@
         <v-list-item
           @click="handleLogout"
           prepend-icon="mdi-logout"
-          title="Logout"
+          title="Keluar"
           value="logout"
         ></v-list-item>
       </v-list>
@@ -39,8 +39,8 @@
       <v-list>
         <v-list-item
           prepend-icon="mdi-account-circle"
-          title="Guest User"
-          subtitle="Please login to continue"
+          title="Pengguna Tamu"
+          subtitle="Silakan login untuk melanjutkan"
         ></v-list-item>
       </v-list>
 
@@ -77,7 +77,7 @@ export default {
       auth: useAuth(),
       menuItems: [
         {
-          title: "Voltage Transform Config",
+          title: "Konfigurasi Voltage Transform",
           icon: "mdi-transmission-tower",
           to: "/voltage-transform-config",
         },
@@ -92,7 +92,7 @@ export default {
           to: "/voltage-fpe",
         },
         {
-          title: "Voltage Transform Group",
+          title: "Grup Voltage Transform",
           icon: "mdi-group",
           to: "/voltage-transform-group",
         },

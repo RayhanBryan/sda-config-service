@@ -1,101 +1,97 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card class="elevation-12" rounded="lg">
-          <v-card-title class="text-center pa-6">
-            <v-row>
-              <v-col cols="12">
-                <v-avatar size="80" color="primary" class="mb-4">
-                  <v-icon size="40" color="white">mdi-account-circle</v-icon>
-                </v-avatar>
-              </v-col>
-              <v-col cols="12">
-                <h2 class="text-h4 font-weight-bold">Welcome Back</h2>
-                <p class="text-subtitle-1 text-medium-emphasis">
-                  Sign in to your account
-                </p>
-              </v-col>
-            </v-row>
-          </v-card-title>
+  <v-container fluid class="fill-height pa-0">
+    <v-row no-gutters class="fill-height">
+      <!-- Left Side - Welcome Section -->
+      <v-col
+        cols="12"
+        md="8"
+        class="welcome-section d-flex flex-column justify-center align-center"
+      >
+        <div class="text-center text-white">
+          <!-- Logo/Icon -->
+          <v-icon size="80" color="white" class="mb-8">
+            mdi-cog-outline
+          </v-icon>
 
-          <v-card-text class="px-6">
-            <v-form ref="form" v-model="valid" lazy-validation>
+          <!-- App Title -->
+          <h1 class="text-h3 font-weight-light mb-4">SDA Config Service</h1>
+
+          <!-- Subtitle -->
+          <p class="text-h6 font-weight-light mb-12">
+            Sistem Konfigurasi Voltage Management
+          </p>
+        </div>
+      </v-col>
+
+      <!-- Right Side - Login Form -->
+      <v-col
+        cols="12"
+        md="4"
+        class="login-section d-flex align-center justify-center"
+      >
+        <div class="login-container">
+          <div class="text-center mb-8">
+            <p class="text-body-2 text-medium-emphasis mb-2">
+              Kelola konfigurasi dengan aman
+            </p>
+            <h2 class="text-h4 font-weight-bold mb-6">Login</h2>
+          </div>
+
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <!-- Username Field -->
+            <div class="mb-4">
+              <label class="text-body-2 text-medium-emphasis mb-2 d-block">
+                Nama Pengguna
+              </label>
               <v-text-field
                 v-model="username"
                 :rules="usernameRules"
-                label="Username"
-                type="text"
-                prepend-inner-icon="mdi-account"
+                placeholder="hilman"
                 variant="outlined"
                 color="primary"
-                class="mb-3"
+                density="comfortable"
+                hide-details="auto"
+                class="custom-input"
                 required
               ></v-text-field>
+            </div>
 
+            <!-- Password Field -->
+            <div class="mb-6">
+              <label class="text-body-2 text-medium-emphasis mb-2 d-block">
+                Kata Sandi
+              </label>
               <v-text-field
                 v-model="password"
                 :rules="passwordRules"
-                label="Password"
+                placeholder="••••••••"
                 :type="showPassword ? 'text' : 'password'"
-                prepend-inner-icon="mdi-lock"
                 :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 @click:append-inner="showPassword = !showPassword"
                 variant="outlined"
                 color="primary"
-                class="mb-3"
+                density="comfortable"
+                hide-details="auto"
+                class="custom-input"
                 required
               ></v-text-field>
+            </div>
 
-              <v-row class="mb-4">
-                <v-col cols="6">
-                  <v-checkbox
-                    v-model="rememberMe"
-                    label="Remember me"
-                    color="primary"
-                    hide-details
-                  ></v-checkbox>
-                </v-col>
-                <v-col cols="6" class="text-right">
-                  <v-btn
-                    variant="text"
-                    color="primary"
-                    size="small"
-                    @click="forgotPassword"
-                  >
-                    Forgot Password?
-                  </v-btn>
-                </v-col>
-              </v-row>
-
-              <v-btn
-                :disabled="!valid"
-                :loading="loading"
-                color="primary"
-                size="large"
-                block
-                @click="login"
-                class="mb-4"
-              >
-                Sign In
-              </v-btn>
-            </v-form>
-          </v-card-text>
-
-          <v-card-actions class="justify-center pa-6">
-            <p class="text-body-2">
-              Don't have an account?
-              <v-btn
-                variant="text"
-                color="primary"
-                size="small"
-                @click="goToRegister"
-              >
-                Sign up
-              </v-btn>
-            </p>
-          </v-card-actions>
-        </v-card>
+            <!-- Login Button -->
+            <v-btn
+              :disabled="!valid"
+              :loading="loading"
+              color="primary"
+              size="large"
+              block
+              @click="login"
+              class="login-btn text-none"
+              rounded="lg"
+            >
+              MASUK
+            </v-btn>
+          </v-form>
+        </div>
       </v-col>
     </v-row>
 
@@ -118,7 +114,7 @@
       {{ snackbar.message }}
       <template v-slot:actions>
         <v-btn color="white" variant="text" @click="snackbar.show = false">
-          Close
+          Tutup
         </v-btn>
       </template>
     </v-snackbar>
@@ -137,7 +133,6 @@ export default {
       auth: useAuth(),
       username: "",
       password: "",
-      rememberMe: false,
       showPassword: false,
       valid: false,
       loading: false,
@@ -147,12 +142,12 @@ export default {
         color: "success",
       },
       usernameRules: [
-        (v) => !!v || "Username is required",
-        (v) => (v && v.length >= 3) || "Username must be at least 3 characters",
+        (v) => !!v || "Nama pengguna wajib diisi",
+        (v) => (v && v.length >= 3) || "Nama pengguna minimal 3 karakter",
       ],
       passwordRules: [
-        (v) => !!v || "Password is required",
-        (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
+        (v) => !!v || "Kata sandi wajib diisi",
+        (v) => (v && v.length >= 6) || "Kata sandi minimal 6 karakter",
       ],
     };
   },
@@ -172,7 +167,7 @@ export default {
 
         if (result.success) {
           this.showSnackbar(
-            `Login successful! Welcome back, ${result.user.name}.`,
+            `Login berhasil! Selamat datang kembali, ${result.user.name}.`,
             "success"
           );
 
@@ -181,14 +176,15 @@ export default {
           }, 1000);
         } else {
           this.showSnackbar(
-            result.error || "Invalid username or password. Please try again.",
+            result.error ||
+              "Nama pengguna atau kata sandi salah. Silakan coba lagi.",
             "error"
           );
         }
       } catch (error) {
         console.error("Login error:", error);
         this.showSnackbar(
-          "Login failed. Please check your connection and try again.",
+          "Login gagal. Silakan periksa koneksi dan coba lagi.",
           "error"
         );
       } finally {
@@ -197,22 +193,22 @@ export default {
     },
 
     googleLogin() {
-      this.showSnackbar("Google login integration coming soon!", "info");
+      this.showSnackbar("Integrasi login Google segera hadir!", "info");
     },
 
     githubLogin() {
-      this.showSnackbar("GitHub login integration coming soon!", "info");
+      this.showSnackbar("Integrasi login GitHub segera hadir!", "info");
     },
 
     forgotPassword() {
       this.showSnackbar(
-        "Password reset email would be sent to your email.",
+        "Email reset kata sandi akan dikirim ke email Anda.",
         "info"
       );
     },
 
     goToRegister() {
-      this.showSnackbar("Registration page coming soon!", "info");
+      this.showSnackbar("Halaman pendaftaran segera hadir!", "info");
     },
 
     showSnackbar(message, color = "success") {
@@ -227,15 +223,125 @@ export default {
 <style scoped>
 .fill-height {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.v-card {
+.welcome-section {
+  background: linear-gradient(135deg, #ffb3e6 0%, #b8a9ff 50%, #a8e6cf 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
 }
 
-.v-avatar {
-  margin: 0 auto;
+.welcome-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.login-section {
+  background: linear-gradient(135deg, #fff0f8 0%, #f5f0ff 50%, #f0fff8 100%);
+  min-height: 100vh;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+}
+
+.custom-input {
+  background: white;
+  border-radius: 8px;
+}
+
+.custom-input .v-field {
+  border-radius: 8px !important;
+}
+
+.login-btn {
+  background: linear-gradient(
+    135deg,
+    #b8a9ff 0%,
+    #ffb3e6 50%,
+    #a8e6cf 100%
+  ) !important;
+  color: #333333 !important;
+  font-weight: 600;
+  height: 48px;
+  border-radius: 12px !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(184, 169, 255, 0.3);
+}
+
+.login-btn:hover {
+  background: linear-gradient(
+    135deg,
+    #a8e6cf 0%,
+    #ffb3e6 50%,
+    #b8a9ff 100%
+  ) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(184, 169, 255, 0.5);
+}
+
+.login-btn:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 10px rgba(184, 169, 255, 0.4);
+}
+
+.features-text {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Mobile Responsive */
+@media (max-width: 960px) {
+  .welcome-section {
+    min-height: 40vh;
+  }
+
+  .login-section {
+    min-height: 60vh;
+  }
+
+  .features-text {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: 2rem;
+  }
+
+  .login-container {
+    padding: 1.5rem;
+  }
+}
+
+/* Animation for logo */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.welcome-section .v-icon {
+  animation: float 3s ease-in-out infinite;
 }
 </style>

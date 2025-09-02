@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="text-h6">
         <v-icon left>{{ isEdit ? "mdi-pencil" : "mdi-plus" }}</v-icon>
-        {{ isEdit ? "Edit" : "Create" }} Voltage Transform Configuration
+        {{ isEdit ? "Edit" : "Buat" }} Konfigurasi Voltage Transform
         {{ isEdit }}
       </v-card-title>
 
@@ -45,7 +45,7 @@
                 v-model="formData.transformType"
                 :items="transformTypes"
                 :rules="requiredRules"
-                label="Transform Type"
+                label="Tipe Transform"
                 variant="outlined"
                 required
               ></v-select>
@@ -56,14 +56,14 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey" variant="text" @click="cancel"> Cancel </v-btn>
+        <v-btn color="grey" variant="text" @click="cancel"> Batal </v-btn>
         <v-btn
           color="primary"
           variant="elevated"
           :loading="saving"
           @click="save"
         >
-          {{ isEdit ? "Update" : "Create" }}
+          {{ isEdit ? "Perbarui" : "Buat" }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -106,7 +106,7 @@ export default {
         { title: "Base64 Decode", value: "base64decode" },
         { title: "Mask", value: "mask" },
       ],
-      requiredRules: [(v) => !!v || "This field is required"],
+      requiredRules: [(v) => !!v || "Field ini wajib diisi"],
     };
   },
   computed: {

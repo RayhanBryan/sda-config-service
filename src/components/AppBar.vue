@@ -2,7 +2,7 @@
   <v-app-bar color="primary" prominent>
     <v-app-bar-nav-icon @click="$emit('toggle-drawer')"></v-app-bar-nav-icon>
     <v-toolbar-title @click="router.push('/')" class="cursor-pointer">
-      SDA Configuration Service
+      Layanan Konfigurasi SDA
     </v-toolbar-title>
     <v-spacer></v-spacer>
 
@@ -16,7 +16,7 @@
               <img :src="currentUser?.avatar" v-if="currentUser?.avatar" />
               <v-icon v-else>mdi-account-circle</v-icon>
             </v-avatar>
-            {{ currentUser?.name || "User" }}
+            {{ currentUser?.name || "Pengguna" }}
             <v-icon right>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
@@ -25,7 +25,7 @@
           <v-list-item>
             <v-list-item-title>{{ currentUser?.email }}</v-list-item-title>
             <v-list-item-subtitle>{{
-              currentUser?.role || "User"
+              currentUser?.role || "Pengguna"
             }}</v-list-item-subtitle>
           </v-list-item>
           <v-divider></v-divider>
@@ -33,7 +33,7 @@
             <template v-slot:prepend>
               <v-icon>mdi-logout</v-icon>
             </template>
-            <v-list-item-title>Logout</v-list-item-title>
+            <v-list-item-title>Keluar</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="text-h6">
         <v-icon left>{{ isEdit ? "mdi-pencil" : "mdi-plus" }}</v-icon>
-        {{ isEdit ? "Edit" : "Create" }} Voltage FPE Configuration
+        {{ isEdit ? "Edit" : "Buat" }} Konfigurasi Voltage FPE
       </v-card-title>
 
       <v-card-text>
@@ -33,7 +33,7 @@
               <v-text-field
                 v-model="formData.identity"
                 :rules="requiredRules"
-                label="Identity"
+                label="Identitas"
                 variant="outlined"
                 required
               ></v-text-field>
@@ -64,14 +64,14 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey" variant="text" @click="cancel"> Cancel </v-btn>
+        <v-btn color="grey" variant="text" @click="cancel"> Batal </v-btn>
         <v-btn
           color="primary"
           variant="elevated"
           :loading="saving"
           @click="save"
         >
-          {{ isEdit ? "Update" : "Create" }}
+          {{ isEdit ? "Perbarui" : "Buat" }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -107,7 +107,7 @@ export default {
         libraryContextId: "",
         sharedSecret: "",
       },
-      requiredRules: [(v) => !!v || "This field is required"],
+      requiredRules: [(v) => !!v || "Field ini wajib diisi"],
     };
   },
   computed: {

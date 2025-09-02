@@ -5,7 +5,7 @@
         <v-card>
           <v-card-title class="text-h5">
             <v-icon left>mdi-cog</v-icon>
-            Voltage FPE Configuration
+            Konfigurasi Voltage FPE
           </v-card-title>
 
           <v-card-text>
@@ -18,7 +18,7 @@
                   @click="openCreateDialog"
                   block
                 >
-                  Add New Config
+                  Tambah Konfigurasi Baru
                 </v-btn>
               </v-col>
             </v-row>
@@ -72,27 +72,27 @@
     <!-- Delete Confirmation Dialog -->
     <v-dialog v-model="deleteDialog" max-width="600">
       <v-card>
-        <v-card-title class="text-h6">Confirm Delete</v-card-title>
+        <v-card-title class="text-h6">Konfirmasi Hapus</v-card-title>
         <v-card-text>
           <v-alert type="warning" variant="tonal" class="mb-4">
-            <v-alert-title>Warning</v-alert-title>
-            Deleting this FPE ID will also delete all detail configurations that
-            contain the selected FPE ID.
+            <v-alert-title>Peringatan</v-alert-title>
+            Menghapus FPE ID ini juga akan menghapus semua konfigurasi detail
+            yang mengandung FPE ID yang dipilih.
           </v-alert>
 
-          <p>Are you sure you want to delete this voltage FPE configuration?</p>
+          <p>Apakah Anda yakin ingin menghapus konfigurasi voltage FPE ini?</p>
           <p class="text-caption text-grey">
-            This action cannot be undone and will affect related detail
-            configurations.
+            Tindakan ini tidak dapat dibatalkan dan akan mempengaruhi
+            konfigurasi detail yang terkait.
           </p>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="deleteDialog = false">
-            Cancel
+            Batal
           </v-btn>
           <v-btn color="error" variant="text" @click="confirmDelete">
-            Delete Anyway
+            Tetap Hapus
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -108,7 +108,7 @@
       {{ snackbar.message }}
       <template v-slot:actions>
         <v-btn color="white" variant="text" @click="snackbar.show = false">
-          Close
+          Tutup
         </v-btn>
       </template>
     </v-snackbar>
@@ -135,14 +135,14 @@ export default {
       headers: [
         { title: "FPE ID", value: "fpeId", sortable: true },
         { title: "Format", value: "format", sortable: true },
-        { title: "Identity", value: "identity", sortable: true },
+        { title: "Identitas", value: "identity", sortable: true },
         {
           title: "Library Context ID",
           value: "libraryContextId",
           sortable: true,
         },
         { title: "Shared Secret", value: "sharedSecret", sortable: true },
-        { title: "Actions", value: "actions", sortable: false, width: "120" },
+        { title: "Aksi", value: "actions", sortable: false, width: "120" },
       ],
       snackbar: {
         show: false,
@@ -162,11 +162,11 @@ export default {
         if (response.success) {
           this.configurations = response.data;
         } else {
-          this.showSnackbar("Failed to load configurations", "error");
+          this.showSnackbar("Gagal memuat konfigurasi", "error");
         }
       } catch (error) {
         console.error("Error loading configurations:", error);
-        this.showSnackbar("Error loading configurations", "error");
+        this.showSnackbar("Terjadi kesalahan saat memuat konfigurasi", "error");
       } finally {
         this.loading = false;
       }
@@ -195,14 +195,17 @@ export default {
           this.selectedItem.fpeId
         );
         if (response.success) {
-          this.showSnackbar("Configuration deleted successfully", "success");
+          this.showSnackbar("Konfigurasi berhasil dihapus", "success");
           await this.loadConfigurations();
         } else {
-          this.showSnackbar("Failed to delete configuration", "error");
+          this.showSnackbar("Gagal menghapus konfigurasi", "error");
         }
       } catch (error) {
         console.error("Error deleting configuration:", error);
-        this.showSnackbar("Error deleting configuration", "error");
+        this.showSnackbar(
+          "Terjadi kesalahan saat menghapus konfigurasi",
+          "error"
+        );
       } finally {
         this.deleteDialog = false;
         this.selectedItem = null;
@@ -220,19 +223,22 @@ export default {
 
         if (response.success) {
           this.showSnackbar(
-            `Configuration ${this.isEdit ? "updated" : "created"} successfully`,
+            `Konfigurasi berhasil ${this.isEdit ? "diperbarui" : "dibuat"}`,
             "success"
           );
           await this.loadConfigurations();
         } else {
           this.showSnackbar(
-            `Failed to ${this.isEdit ? "update" : "create"} configuration`,
+            `Gagal ${this.isEdit ? "memperbarui" : "membuat"} konfigurasi`,
             "error"
           );
         }
       } catch (error) {
         console.error("Error saving configuration:", error);
-        this.showSnackbar("Error saving configuration", "error");
+        this.showSnackbar(
+          "Terjadi kesalahan saat menyimpan konfigurasi",
+          "error"
+        );
       } finally {
         this.dialog = false;
         this.selectedItem = null;

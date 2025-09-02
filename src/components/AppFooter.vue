@@ -1,6 +1,10 @@
 <template>
   <v-footer color="primary" dark padless>
-    <v-row justify="center" no-gutters> Bryan Ganteng </v-row>
+    <v-row justify="center" no-gutters>
+      <v-col class="text-center py-4">
+        <span>© 2025 Layanan Konfigurasi SDA</span>
+      </v-col>
+    </v-row>
   </v-footer>
 </template>
 

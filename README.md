@@ -22,7 +22,7 @@ src/
 │   ├── AppFooter.vue             # Application footer
 │   ├── NavigationDrawer.vue      # Side navigation menu
 │   ├── LoginPage.vue             # Authentication page
-│   ├── Home.vue                  # Dashboard/home page
+│   ├── NotFound.vue              # 404 error page
 │   ├── voltage-fpe/              # Voltage FPE management
 │   │   ├── VoltageFpeDialog.vue  # FPE configuration dialog
 │   │   └── VoltageFpeList.vue    # FPE list view

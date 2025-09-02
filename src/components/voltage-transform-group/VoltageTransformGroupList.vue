@@ -5,7 +5,7 @@
         <v-card>
           <v-card-title class="text-h5">
             <v-icon left>mdi-group</v-icon>
-            Voltage Transform Group ID
+            ID Grup Voltage Transform
           </v-card-title>
 
           <v-card-text>
@@ -13,7 +13,7 @@
               <v-col cols="12" md="8">
                 <v-text-field
                   v-model="searchId"
-                  label="Search by ID"
+                  label="Cari berdasarkan ID"
                   variant="outlined"
                   prepend-inner-icon="mdi-magnify"
                   clearable
@@ -28,7 +28,7 @@
                   @click="openAddDialog"
                   block
                 >
-                  Add Group
+                  Tambah Grup
                 </v-btn>
               </v-col>
             </v-row>
@@ -42,7 +42,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            <span class="text-h6">Transform Groups</span>
+            <span class="text-h6">Grup Transform</span>
           </v-card-title>
 
           <v-data-table
@@ -80,9 +80,9 @@
             <template v-slot:no-data>
               <div class="text-center pa-4">
                 <v-icon size="64" color="grey">mdi-database-search</v-icon>
-                <p class="text-grey mt-2">No data available</p>
+                <p class="text-grey mt-2">Tidak ada data tersedia</p>
                 <p class="text-caption text-grey">
-                  Add a new group to get started
+                  Tambahkan grup baru untuk memulai
                 </p>
               </div>
             </template>
@@ -94,20 +94,20 @@
     <!-- Add Group Dialog -->
     <v-dialog v-model="addDialog" max-width="500">
       <v-card>
-        <v-card-title class="text-h6">Add New Group</v-card-title>
+        <v-card-title class="text-h6">Tambah Grup Baru</v-card-title>
         <v-card-text>
           <v-text-field
             v-model="newGroupName"
-            label="Group Name"
+            label="Nama Grup"
             variant="outlined"
             required
-            :rules="[(v) => !!v || 'Group name is required']"
+            :rules="[(v) => !!v || 'Nama grup wajib diisi']"
           ></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="addDialog = false">
-            Cancel
+            Batal
           </v-btn>
           <v-btn
             color="success"
@@ -115,7 +115,7 @@
             @click="createGroup"
             :loading="creating"
           >
-            Add
+            Tambah
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -126,7 +126,7 @@
       <v-card>
         <v-card-title class="text-h6 text-success">
           <v-icon left color="success">mdi-check-circle</v-icon>
-          Group Successfully Added
+          Grup Berhasil Ditambahkan
         </v-card-title>
         <v-card-text>
           <div class="text-center pa-4">
@@ -153,12 +153,12 @@
                 @click="copyToClipboard(createdGroup?.jsonTransformId)"
                 size="small"
               >
-                Copy
+                Salin
               </v-btn>
             </div>
             <p class="text-caption text-grey mt-4">
-              Click "Go to Detail Config" to add detail configurations using
-              this JSON Transform ID.
+              Klik "Pergi ke Konfigurasi Detail" untuk menambahkan konfigurasi
+              detail menggunakan JSON Transform ID ini.
             </p>
           </div>
         </v-card-text>
@@ -169,7 +169,7 @@
             prepend-icon="mdi-arrow-right"
             @click="goToDetailConfig"
           >
-            Go to Detail Config
+            Pergi ke Konfigurasi Detail
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
@@ -186,24 +186,24 @@
     <!-- Delete Confirmation Dialog -->
     <v-dialog v-model="deleteDialog" max-width="600">
       <v-card>
-        <v-card-title class="text-h6">Confirm Delete</v-card-title>
+        <v-card-title class="text-h6">Konfirmasi Hapus</v-card-title>
         <v-card-text>
           <v-alert type="warning" variant="tonal" class="mb-4">
-            <v-alert-title>Warning</v-alert-title>
-            Deleting this JSON Transform ID will also delete all detail
-            configurations that contain the selected JSON Transform ID.
+            <v-alert-title>Peringatan</v-alert-title>
+            Menghapus JSON Transform ID ini juga akan menghapus semua
+            konfigurasi detail yang mengandung JSON Transform ID yang dipilih.
           </v-alert>
 
-          <p>Are you sure you want to delete this voltage transform group?</p>
+          <p>Apakah Anda yakin ingin menghapus grup voltage transform ini?</p>
           <p class="text-caption text-grey">
-            This action cannot be undone and will affect related detail
-            configurations.
+            Tindakan ini tidak dapat dibatalkan dan akan mempengaruhi
+            konfigurasi detail yang terkait.
           </p>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="deleteDialog = false">
-            Cancel
+            Batal
           </v-btn>
           <v-btn
             color="error"
@@ -211,7 +211,7 @@
             @click="confirmDelete"
             :loading="deleting"
           >
-            Delete Anyway
+            Tetap Hapus
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -227,7 +227,7 @@
       {{ snackbar.message }}
       <template v-slot:actions>
         <v-btn color="white" variant="text" @click="snackbar.show = false">
-          Close
+          Tutup
         </v-btn>
       </template>
     </v-snackbar>
@@ -259,10 +259,10 @@ export default {
           value: "jsonTransformId",
           sortable: true,
         },
-        { title: "Name", value: "name", sortable: true },
-        { title: "Created By", value: "createdBy", sortable: true },
-        { title: "Created At", value: "createdAt", sortable: true },
-        { title: "Actions", value: "actions", sortable: false, width: "100" },
+        { title: "Nama", value: "name", sortable: true },
+        { title: "Dibuat Oleh", value: "createdBy", sortable: true },
+        { title: "Dibuat Pada", value: "createdAt", sortable: true },
+        { title: "Aksi", value: "actions", sortable: false, width: "100" },
       ],
       snackbar: {
         show: false,
@@ -301,7 +301,7 @@ export default {
 
     async createGroup() {
       if (!this.newGroupName?.trim()) {
-        this.showSnackbar("Please enter a group name", "warning");
+        this.showSnackbar("Silakan masukkan nama grup", "warning");
         return;
       }
 
@@ -327,11 +327,11 @@ export default {
           // Reload data to show the new group
           await this.loadAllGroups();
         } else {
-          this.showSnackbar("Failed to create group", "error");
+          this.showSnackbar("Gagal membuat grup", "error");
         }
       } catch (error) {
         console.error("Error creating group:", error);
-        this.showSnackbar("Error creating group", "error");
+        this.showSnackbar("Terjadi kesalahan saat membuat grup", "error");
       } finally {
         this.creating = false;
       }
@@ -346,14 +346,14 @@ export default {
           this.allGroups = response.data || [];
           this.groups = [...this.allGroups]; // Show all data initially
           if (this.allGroups.length > 0) {
-            this.showSnackbar("Data loaded successfully", "success");
+            this.showSnackbar("Data berhasil dimuat", "success");
           }
         } else {
-          this.showSnackbar("Failed to load data", "error");
+          this.showSnackbar("Gagal memuat data", "error");
         }
       } catch (error) {
         console.error("Error loading all groups:", error);
-        this.showSnackbar("Error loading data", "error");
+        this.showSnackbar("Terjadi kesalahan saat memuat data", "error");
       } finally {
         this.loading = false;
       }
@@ -373,7 +373,7 @@ export default {
           this.selectedItem.jsonTransformId
         );
         if (response.success) {
-          this.showSnackbar("Group deleted successfully", "success");
+          this.showSnackbar("Grup berhasil dihapus", "success");
           // Remove from both arrays
           this.groups = this.groups.filter(
             (group) =>
@@ -384,11 +384,11 @@ export default {
               group.jsonTransformId !== this.selectedItem.jsonTransformId
           );
         } else {
-          this.showSnackbar("Failed to delete group", "error");
+          this.showSnackbar("Gagal menghapus grup", "error");
         }
       } catch (error) {
         console.error("Error deleting group:", error);
-        this.showSnackbar("Error deleting group", "error");
+        this.showSnackbar("Terjadi kesalahan saat menghapus grup", "error");
       } finally {
         this.deleting = false;
         this.deleteDialog = false;
@@ -405,7 +405,10 @@ export default {
     async copyToClipboard(text) {
       try {
         await navigator.clipboard.writeText(text);
-        this.showSnackbar("JSON Transform ID copied to clipboard!", "success");
+        this.showSnackbar(
+          "JSON Transform ID berhasil disalin ke clipboard!",
+          "success"
+        );
       } catch (error) {
         // Fallback for older browsers
         const textArea = document.createElement("textarea");
@@ -416,11 +419,11 @@ export default {
         try {
           document.execCommand("copy");
           this.showSnackbar(
-            "JSON Transform ID copied to clipboard!",
+            "JSON Transform ID berhasil disalin ke clipboard!",
             "success"
           );
         } catch (fallbackError) {
-          this.showSnackbar("Failed to copy to clipboard", "error");
+          this.showSnackbar("Gagal menyalin ke clipboard", "error");
         }
         document.body.removeChild(textArea);
       }

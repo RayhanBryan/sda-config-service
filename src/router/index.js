@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { Home, LoginPage } from "../components";
+import LoginPage from "../components/LoginPage.vue";
+import NotFound from "../components/NotFound.vue";
 
 const routes = [
   {
@@ -15,7 +16,7 @@ const routes = [
     name: "Login",
     component: LoginPage,
     meta: {
-      title: "Login - SDA Configuration Service",
+      title: "Login - Layanan Konfigurasi SDA",
       requiresAuth: false, // Halaman login tidak memerlukan auth
     },
   },
@@ -25,7 +26,7 @@ const routes = [
     component: () =>
       import("../components/voltage-transform/VoltageTransformList.vue"),
     meta: {
-      title: "Voltage Transform Configuration - SDA Configuration Service",
+      title: "Konfigurasi Voltage Transform - Layanan Konfigurasi SDA",
       requiresAuth: true,
     },
   },
@@ -35,8 +36,7 @@ const routes = [
     component: () =>
       import("../components/voltage-library/VoltageLibraryList.vue"),
     meta: {
-      title:
-        "Voltage Library Context Configuration - SDA Configuration Service",
+      title: "Voltage Library - Layanan Konfigurasi SDA",
       requiresAuth: true,
     },
   },
@@ -45,7 +45,7 @@ const routes = [
     name: "VoltageFpe",
     component: () => import("../components/voltage-fpe/VoltageFpeList.vue"),
     meta: {
-      title: "Voltage FPE Configuration - SDA Configuration Service",
+      title: "Konfigurasi Voltage FPE - Layanan Konfigurasi SDA",
       requiresAuth: true,
     },
   },
@@ -57,8 +57,18 @@ const routes = [
         "../components/voltage-transform-group/VoltageTransformGroupList.vue"
       ),
     meta: {
-      title: "Voltage Transform Group ID - SDA Configuration Service",
+      title: "Grup Voltage Transform - Layanan Konfigurasi SDA",
       requiresAuth: true,
+    },
+  },
+  // 404 Not Found Route - harus di akhir
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: NotFound,
+    meta: {
+      title: "Halaman Tidak Ditemukan - Layanan Konfigurasi SDA",
+      requiresAuth: false,
     },
   },
 ];
@@ -78,7 +88,7 @@ const isAuthenticated = () => {
 // Navigation guard untuk auth dan update title
 router.beforeEach((to, from, next) => {
   // Update title
-  document.title = to.meta.title || "SDA Configuration Service";
+  document.title = to.meta.title || "Layanan Konfigurasi SDA";
 
   // Cek apakah route memerlukan authentication
   if (to.meta.requiresAuth && !isAuthenticated()) {
