@@ -1,16 +1,16 @@
 <template>
   <v-container class="fill-height" fluid>
     <v-row align="center" justify="center" class="text-center">
-      <v-col cols="12" md="8" lg="6">
+      <v-col cols="12" md="8" lg="6" class="d-flex flex-column align-center">
         <!-- 404 Illustration -->
-        <div class="mb-8">
-          <v-icon size="200" color="primary" class="error-icon mb-4">
+        <div>
+          <v-icon size="120" color="primary" class="error-icon mb-3">
             mdi-emoticon-sad-outline
           </v-icon>
 
           <div class="error-number">
             <span class="text-h1 font-weight-bold text-primary">4</span>
-            <v-icon size="100" color="primary" class="mx-2">
+            <v-icon size="60" color="primary" class="mx-2">
               mdi-cog-outline
             </v-icon>
             <span class="text-h1 font-weight-bold text-primary">4</span>
@@ -18,13 +18,13 @@
         </div>
 
         <!-- Error Message -->
-        <v-card class="pa-8 mb-6" elevation="2" rounded="lg" color="surface">
-          <v-card-title class="text-h4 font-weight-bold text-error mb-4">
+        <v-card class="pa-6 mb-4" elevation="2" rounded="lg" color="surface">
+          <v-card-title class="text-h6 font-weight-bold text-error mb-3">
             Oops! Halaman Tidak Ditemukan
           </v-card-title>
 
           <v-card-text>
-            <p class="text-h6 text-medium-emphasis mb-4">
+            <p class="text-h6 text-medium-emphasis mb-3">
               Halaman yang Anda cari tidak ada atau telah dipindahkan.
             </p>
             <p class="text-body-1 text-medium-emphasis">
@@ -51,11 +51,8 @@
           </v-btn>
         </div>
 
-        <!-- Additional Help -->
-        <v-divider class="my-8"></v-divider>
-
-        <div class="text-center">
-          <p class="text-body-2 text-medium-emphasis mb-4">
+        <div class="text-center mt-3">
+          <p class="text-body-2 text-medium-emphasis mb-3">
             Butuh bantuan? Coba halaman-halaman populer ini:
           </p>
 
@@ -141,7 +138,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .error-number .v-icon {
@@ -157,10 +154,10 @@ export default {
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
   60% {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
   }
 }
 
@@ -218,12 +215,17 @@ export default {
 }
 
 @media (max-width: 600px) {
+  .error-icon {
+    font-size: 80px !important;
+  }
+
   .error-number {
     flex-direction: column;
   }
 
   .error-number .v-icon {
     margin: 1rem 0 !important;
+    font-size: 40px !important;
   }
 
   .chips-container {
