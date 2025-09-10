@@ -32,8 +32,6 @@ src/
 │   ├── voltage-transform/        # Voltage transformation configs
 │   │   ├── VoltageConfigDialog.vue
 │   │   └── VoltageTransformList.vue
-│   └── voltage-transform-group/  # Transform group management
-│       └── VoltageTransformGroupList.vue
 ├── composables/                  # Vue composables
 │   └── useAuth.js               # Authentication logic
 ├── services/                    # API service layer
@@ -41,7 +39,7 @@ src/
 │   ├── voltageFpeService.js    # FPE API endpoints
 │   ├── voltageLibraryService.js # Library API endpoints
 │   ├── voltageTransformService.js # Transform API endpoints
-│   └── voltageTransformGroupService.js
+│   └── configIdService.js
 ├── router/                     # Vue Router configuration
 │   └── index.js               # Route definitions
 ├── plugins/                   # Vue plugins
@@ -106,10 +104,6 @@ npm run preview
 
 - **VoltageTransformList**: Manage voltage transformations
 - **VoltageConfigDialog**: Configure transformation parameters
-
-### Transform Groups
-
-- **VoltageTransformGroupList**: Organize transforms into groups
 
 ## 🔐 Authentication
 

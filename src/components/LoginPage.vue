@@ -18,7 +18,7 @@
 
           <!-- Subtitle -->
           <p class="text-h6 font-weight-light mb-12">
-            Sistem Konfigurasi Voltage Management
+            Voltage Management Configuration System
           </p>
         </div>
       </v-col>
@@ -32,7 +32,7 @@
         <div class="login-container">
           <div class="text-center mb-8">
             <p class="text-body-2 text-medium-emphasis mb-2">
-              Kelola konfigurasi dengan aman
+              Manage configurations securely
             </p>
             <h2 class="text-h4 font-weight-bold mb-6">Login</h2>
           </div>
@@ -41,7 +41,7 @@
             <!-- Username Field -->
             <div class="mb-4">
               <label class="text-body-2 text-medium-emphasis mb-2 d-block">
-                Nama Pengguna
+                Username
               </label>
               <v-text-field
                 v-model="username"
@@ -59,7 +59,7 @@
             <!-- Password Field -->
             <div class="mb-6">
               <label class="text-body-2 text-medium-emphasis mb-2 d-block">
-                Kata Sandi
+                Password
               </label>
               <v-text-field
                 v-model="password"
@@ -88,7 +88,7 @@
               class="login-btn text-none"
               rounded="lg"
             >
-              MASUK
+              LOGIN
             </v-btn>
           </v-form>
         </div>
@@ -142,12 +142,12 @@ export default {
         color: "success",
       },
       usernameRules: [
-        (v) => !!v || "Nama pengguna wajib diisi",
-        (v) => (v && v.length >= 3) || "Nama pengguna minimal 3 karakter",
+        (v) => !!v || "Username is required",
+        (v) => (v && v.length >= 3) || "Username must be at least 3 characters",
       ],
       passwordRules: [
-        (v) => !!v || "Kata sandi wajib diisi",
-        (v) => (v && v.length >= 6) || "Kata sandi minimal 6 karakter",
+        (v) => !!v || "Password is required",
+        (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
       ],
     };
   },
@@ -167,7 +167,7 @@ export default {
 
         if (result.success) {
           this.showSnackbar(
-            `Login berhasil! Selamat datang kembali, ${result.user.name}.`,
+            `Login successful! Welcome back, ${result.user.name}.`,
             "success"
           );
 
@@ -176,15 +176,14 @@ export default {
           }, 1000);
         } else {
           this.showSnackbar(
-            result.error ||
-              "Nama pengguna atau kata sandi salah. Silakan coba lagi.",
+            result.error || "Invalid username or password. Please try again.",
             "error"
           );
         }
       } catch (error) {
         console.error("Login error:", error);
         this.showSnackbar(
-          "Login gagal. Silakan periksa koneksi dan coba lagi.",
+          "Login failed. Please check your connection and try again.",
           "error"
         );
       } finally {
@@ -193,22 +192,22 @@ export default {
     },
 
     googleLogin() {
-      this.showSnackbar("Integrasi login Google segera hadir!", "info");
+      this.showSnackbar("Google login integration coming soon!", "info");
     },
 
     githubLogin() {
-      this.showSnackbar("Integrasi login GitHub segera hadir!", "info");
+      this.showSnackbar("GitHub login integration coming soon!", "info");
     },
 
     forgotPassword() {
       this.showSnackbar(
-        "Email reset kata sandi akan dikirim ke email Anda.",
+        "Password reset email will be sent to your email.",
         "info"
       );
     },
 
     goToRegister() {
-      this.showSnackbar("Halaman pendaftaran segera hadir!", "info");
+      this.showSnackbar("Registration page coming soon!", "info");
     },
 
     showSnackbar(message, color = "success") {

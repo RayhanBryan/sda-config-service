@@ -1,10 +1,13 @@
 import api from "./api";
 
-const voltageTransformGroupService = {
+const configIdService = {
   async create(data) {
     try {
       const response = await api.post(
-        "/voltage-transform-group-id/get-id?name=" + data.name
+        "/voltage-transform-group-id/get-id?prefix=" +
+          data.prefix +
+          "&description=" +
+          (data.description || "")
       );
       console.log("Create response:", response);
 
@@ -13,7 +16,7 @@ const voltageTransformGroupService = {
         data: response.data || response || [],
       };
     } catch (error) {
-      console.error("Error creating voltage transform group:", error);
+      console.error("Error creating config ID:", error);
       return {
         success: false,
         error: error.response?.data?.message || "Failed to create data",
@@ -37,7 +40,7 @@ const voltageTransformGroupService = {
         data: response.data || response || [],
       };
     } catch (error) {
-      console.error("Error getting all voltage transform groups:", error);
+      console.error("Error getting all config IDs:", error);
       return {
         success: false,
         error: error.response?.data?.message || "Failed to load data",
@@ -55,7 +58,7 @@ const voltageTransformGroupService = {
         data: response.data,
       };
     } catch (error) {
-      console.error("Error deleting voltage transform group:", error);
+      console.error("Error deleting config ID:", error);
       return {
         success: false,
         error: error.response?.data?.message || "Failed to delete",
@@ -64,4 +67,4 @@ const voltageTransformGroupService = {
   },
 };
 
-export default voltageTransformGroupService;
+export default configIdService;

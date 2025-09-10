@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="text-h6">
         <v-icon left>{{ isEdit ? "mdi-pencil" : "mdi-plus" }}</v-icon>
-        {{ isEdit ? "Edit" : "Buat" }} Konfigurasi Voltage FPE
+        {{ isEdit ? "Edit" : "Create" }} Voltage FPE Configuration
       </v-card-title>
 
       <v-card-text>
@@ -33,20 +33,46 @@
               <v-text-field
                 v-model="formData.identity"
                 :rules="requiredRules"
-                label="Identitas"
+                label="Identity"
                 variant="outlined"
                 required
               ></v-text-field>
             </v-col>
 
             <v-col cols="12">
-              <v-text-field
-                v-model="formData.libraryContextId"
-                :rules="requiredRules"
-                label="Library Context ID"
-                variant="outlined"
-                required
-              ></v-text-field>
+              <v-row>
+                <v-col cols="10">
+                  <v-select
+                    v-model="formData.libraryContextId"
+                    :items="libraryContexts"
+                    item-title="libraryContextId"
+                    item-value="libraryContextId"
+                    :rules="requiredRules"
+                    label="Library Context ID"
+                    variant="outlined"
+                    required
+                    clearable
+                  >
+                    <template v-slot:item="{ props, item }">
+                      <v-list-item v-bind="props">
+                        <v-list-item-subtitle>{{
+                          item.raw.policyUrl
+                        }}</v-list-item-subtitle>
+                      </v-list-item>
+                    </template>
+                  </v-select>
+                </v-col>
+                <v-col cols="2" class="d-flex align-center">
+                  <v-btn
+                    color="primary"
+                    variant="outlined"
+                    icon="mdi-plus"
+                    size="small"
+                    @click="openAddLibraryDialog"
+                    :title="'Add New Library'"
+                  ></v-btn>
+                </v-col>
+              </v-row>
             </v-col>
 
             <v-col cols="12">
@@ -55,6 +81,11 @@
                 :rules="requiredRules"
                 label="Shared Secret"
                 variant="outlined"
+                :type="showSharedSecret ? 'text' : 'password'"
+                :append-inner-icon="
+                  showSharedSecret ? 'mdi-eye-off' : 'mdi-eye'
+                "
+                @click:append-inner="showSharedSecret = !showSharedSecret"
                 required
               ></v-text-field>
             </v-col>
@@ -64,14 +95,14 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey" variant="text" @click="cancel"> Batal </v-btn>
+        <v-btn color="grey" variant="text" @click="cancel"> Cancel </v-btn>
         <v-btn
           color="primary"
           variant="elevated"
           :loading="saving"
           @click="save"
         >
-          {{ isEdit ? "Perbarui" : "Buat" }}
+          {{ isEdit ? "Update" : "Create" }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -94,12 +125,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    libraryContexts: {
+      type: Array,
+      default: () => [],
+    },
   },
-  emits: ["update:modelValue", "save", "cancel"],
+  emits: ["update:modelValue", "save", "cancel", "openLibraryDialog"],
   data() {
     return {
       valid: false,
       saving: false,
+      showSharedSecret: false,
       formData: {
         fpeId: "",
         format: "",
@@ -107,7 +143,7 @@ export default {
         libraryContextId: "",
         sharedSecret: "",
       },
-      requiredRules: [(v) => !!v || "Field ini wajib diisi"],
+      requiredRules: [(v) => !!v || "This field is required"],
     };
   },
   computed: {
@@ -132,6 +168,7 @@ export default {
   },
   methods: {
     resetForm() {
+      this.showSharedSecret = false;
       this.formData = {
         fpeId: "",
         format: "",
@@ -177,6 +214,10 @@ export default {
     cancel() {
       this.$emit("cancel");
     },
+
+    openAddLibraryDialog() {
+      this.$emit("openLibraryDialog");
+    },
   },
 };
 </script>
@@ -184,5 +225,13 @@ export default {
 <style scoped>
 .v-textarea :deep(textarea) {
   font-family: "Courier New", monospace;
+}
+
+.d-flex.align-center {
+  height: 100%;
+}
+
+.v-btn {
+  margin-top: 8px;
 }
 </style>

@@ -16,8 +16,8 @@ const routes = [
     name: "Login",
     component: LoginPage,
     meta: {
-      title: "Login - Layanan Konfigurasi SDA",
-      requiresAuth: false, // Halaman login tidak memerlukan auth
+      title: "Login - SDA Configuration Service",
+      requiresAuth: false, // Login page doesn't require auth
     },
   },
   {
@@ -26,7 +26,7 @@ const routes = [
     component: () =>
       import("../components/voltage-transform/VoltageTransformList.vue"),
     meta: {
-      title: "Konfigurasi Voltage Transform - Layanan Konfigurasi SDA",
+      title: "Voltage Transform Configuration - SDA Configuration Service",
       requiresAuth: true,
     },
   },
@@ -36,7 +36,7 @@ const routes = [
     component: () =>
       import("../components/voltage-library/VoltageLibraryList.vue"),
     meta: {
-      title: "Voltage Library - Layanan Konfigurasi SDA",
+      title: "Voltage Library - SDA Configuration Service",
       requiresAuth: true,
     },
   },
@@ -45,29 +45,27 @@ const routes = [
     name: "VoltageFpe",
     component: () => import("../components/voltage-fpe/VoltageFpeList.vue"),
     meta: {
-      title: "Konfigurasi Voltage FPE - Layanan Konfigurasi SDA",
+      title: "Voltage FPE Configuration - SDA Configuration Service",
       requiresAuth: true,
     },
   },
   {
-    path: "/voltage-transform-group",
-    name: "VoltageTransformGroup",
+    path: "/create-config-id",
+    name: "CreateConfigId",
     component: () =>
-      import(
-        "../components/voltage-transform-group/VoltageTransformGroupList.vue"
-      ),
+      import("../components/create-config-id/CreateConfigId.vue"),
     meta: {
-      title: "Grup Voltage Transform - Layanan Konfigurasi SDA",
+      title: "Create Config ID - SDA Configuration Service",
       requiresAuth: true,
     },
   },
-  // 404 Not Found Route - harus di akhir
+  // 404 Not Found Route - must be at the end
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: NotFound,
     meta: {
-      title: "Halaman Tidak Ditemukan - Layanan Konfigurasi SDA",
+      title: "Page Not Found - SDA Configuration Service",
       requiresAuth: false,
     },
   },
@@ -78,27 +76,27 @@ const router = createRouter({
   routes,
 });
 
-// Fungsi untuk mengecek status login
+// Function to check login status
 const isAuthenticated = () => {
   const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
   const hasToken = sessionStorage.getItem("authToken");
   return isLoggedIn && hasToken;
 };
 
-// Navigation guard untuk auth dan update title
+// Navigation guard for auth and title update
 router.beforeEach((to, from, next) => {
   // Update title
-  document.title = to.meta.title || "Layanan Konfigurasi SDA";
+  document.title = to.meta.title || "SDA Configuration Service";
 
-  // Cek apakah route memerlukan authentication
+  // Check if route requires authentication
   if (to.meta.requiresAuth && !isAuthenticated()) {
-    // Jika belum login dan route memerlukan auth, redirect ke login
+    // If not logged in and route requires auth, redirect to login
     next("/login");
   } else if (to.name === "Login" && isAuthenticated()) {
-    // Jika sudah login dan mencoba akses login page, redirect ke home
+    // If already logged in and trying to access login page, redirect to home
     next("/");
   } else {
-    // Lanjutkan ke route yang diminta
+    // Continue to requested route
     next();
   }
 });

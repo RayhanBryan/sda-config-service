@@ -1,69 +1,122 @@
 <template>
-  <v-dialog v-model="dialog" max-width="800" persistent>
+  <v-dialog v-model="dialog" max-width="1200" persistent>
     <v-card>
       <v-card-title class="text-h6">
-        <v-icon left>{{ isEdit ? "mdi-pencil" : "mdi-plus" }}</v-icon>
-        {{ isEdit ? "Edit" : "Buat" }} Konfigurasi Voltage Transform
-        {{ isEdit }}
+        <v-icon left>mdi-plus-box-multiple</v-icon>
+        Add Configurations
       </v-card-title>
 
       <v-card-text>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-row>
-            <v-col cols="12" md="6" v-if="!isEdit">
-              <v-text-field
-                v-model="formData.jsonTransformId"
-                :rules="requiredRules"
-                label="JSON Transform ID"
-                variant="outlined"
-                required
-              ></v-text-field>
-            </v-col>
+        <v-row class="mb-4">
+          <v-col cols="12" md="6">
+            <v-select
+              v-model="configId"
+              :items="configIdOptions"
+              label="Config ID"
+              variant="outlined"
+              placeholder="Select Config ID"
+              :rules="[(v) => !!v || 'Required']"
+              hide-details="auto"
+              :loading="loadingConfigIds"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" md="6" class="d-flex align-center">
+            <v-alert type="info" variant="tonal" class="flex-grow-1 mr-4">
+              Add multiple configurations with the same Config ID. Click "Add
+              Row" to add more entries.
+            </v-alert>
+            <v-btn
+              color="primary"
+              variant="outlined"
+              prepend-icon="mdi-plus"
+              @click="addBulkRow"
+              :disabled="!canAddNewRow"
+            >
+              Add Row
+            </v-btn>
+          </v-col>
+        </v-row>
 
-            <v-col cols="12" md="6">
-              <v-text-field
-                v-model="formData.fpeId"
-                :rules="requiredRules"
-                label="FPE ID"
-                variant="outlined"
-                required
-              ></v-text-field>
-            </v-col>
+        <v-data-table
+          :headers="bulkHeaders"
+          :items="bulkItems"
+          :hide-default-footer="true"
+          class="elevation-1"
+        >
+          <template v-slot:item.fpeId="{ item, index }">
+            <v-select
+              v-model="bulkItems[index].fpeId"
+              :items="fpeIdOptions"
+              variant="outlined"
+              density="compact"
+              placeholder="Select FPE ID"
+              :rules="[(v) => !!v || 'Required']"
+              hide-details="auto"
+              :loading="loadingFpeIds"
+              class="my-2"
+            ></v-select>
+          </template>
 
-            <v-col cols="12" md="6" v-if="!isEdit">
-              <v-text-field
-                v-model="formData.jsonPathFieldName"
-                :rules="requiredRules"
-                label="JSON Path Field Name"
-                variant="outlined"
-                required
-              ></v-text-field>
-            </v-col>
+          <template v-slot:item.jsonPathFieldName="{ item, index }">
+            <v-text-field
+              v-model="bulkItems[index].jsonPathFieldName"
+              variant="outlined"
+              density="compact"
+              placeholder="field1"
+              :rules="[(v) => !!v || 'Required']"
+              hide-details="auto"
+              class="my-2"
+            ></v-text-field>
+          </template>
 
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="formData.transformType"
-                :items="transformTypes"
-                :rules="requiredRules"
-                label="Tipe Transform"
-                variant="outlined"
-                required
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-form>
+          <template v-slot:item.transformType="{ item, index }">
+            <v-select
+              v-model="bulkItems[index].transformType"
+              :items="transformTypeOptions"
+              variant="outlined"
+              density="compact"
+              :rules="[(v) => !!v || 'Required']"
+              hide-details="auto"
+              class="my-2"
+            ></v-select>
+          </template>
+
+          <template v-slot:item.actions="{ item, index }">
+            <div class="my-2">
+              <v-btn
+                icon="mdi-delete"
+                size="small"
+                color="error"
+                variant="text"
+                @click="removeBulkRow(index)"
+                :disabled="bulkItems.length <= 1"
+              ></v-btn>
+            </div>
+          </template>
+        </v-data-table>
+
+        <v-alert
+          v-if="bulkItems.length > 0"
+          type="success"
+          variant="tonal"
+          class="mt-4"
+        >
+          <strong>Ready to create:</strong> {{ validBulkItems.length }} of
+          {{ bulkItems.length }} configuration(s)
+        </v-alert>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey" variant="text" @click="cancel"> Batal </v-btn>
+        <v-btn color="grey" variant="text" @click="cancel"> Cancel </v-btn>
         <v-btn
           color="primary"
           variant="elevated"
           :loading="saving"
           @click="save"
+          :disabled="validBulkItems.length === 0"
         >
-          {{ isEdit ? "Perbarui" : "Buat" }}
+          Create {{ validBulkItems.length }} Configuration(s)
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -71,6 +124,9 @@
 </template>
 
 <script>
+import voltageFpeService from "../../services/voltageFpeService";
+import configIdService from "../../services/configIdService";
+
 export default {
   name: "VoltageConfigDialog",
   props: {
@@ -78,35 +134,27 @@ export default {
       type: Boolean,
       default: false,
     },
-    item: {
-      type: Object,
-      default: null,
-    },
-    isEdit: {
-      type: Boolean,
-      default: false,
-    },
   },
-  emits: ["update:modelValue", "save", "cancel"],
+  emits: ["update:modelValue", "bulk-save", "cancel"],
   data() {
     return {
-      valid: false,
       saving: false,
-      formData: {
-        jsonTransformId: "",
-        fpeId: "",
-        jsonPathFieldName: "",
-        transformType: "",
-      },
+      loadingFpeIds: false,
+      loadingConfigIds: false,
+      configId: "",
+      fpeIdOptions: [],
+      configIdOptions: [],
+      bulkItems: [
+        {
+          fpeId: "",
+          jsonPathFieldName: "",
+          transformType: "",
+        },
+      ],
       transformTypes: [
         { title: "Encrypt", value: "encrypt" },
         { title: "Decrypt", value: "decrypt" },
-        { title: "Hash", value: "hash" },
-        { title: "Base64 Encode", value: "base64encode" },
-        { title: "Base64 Decode", value: "base64decode" },
-        { title: "Mask", value: "mask" },
       ],
-      requiredRules: [(v) => !!v || "Field ini wajib diisi"],
     };
   },
   computed: {
@@ -118,54 +166,128 @@ export default {
         this.$emit("update:modelValue", value);
       },
     },
+    transformTypeOptions() {
+      return this.transformTypes.map((type) => type.value);
+    },
+    bulkHeaders() {
+      return [
+        { title: "FPE ID", value: "fpeId", sortable: false },
+        {
+          title: "JSON Path Field Name",
+          value: "jsonPathFieldName",
+          sortable: false,
+        },
+        { title: "Transform Type", value: "transformType", sortable: false },
+        { title: "Actions", value: "actions", sortable: false, width: "80" },
+      ];
+    },
+    validBulkItems() {
+      return this.bulkItems.filter(
+        (item) =>
+          this.configId &&
+          item.fpeId &&
+          item.jsonPathFieldName &&
+          item.transformType
+      );
+    },
+    canAddNewRow() {
+      // Check if configId is selected and all existing rows are complete
+      // if (!this.configId) return false;
+
+      return this.bulkItems.every(
+        (item) => item.fpeId && item.jsonPathFieldName && item.transformType
+      );
+    },
   },
   watch: {
     modelValue(newVal) {
       if (newVal) {
         this.resetForm();
-        if (this.item && this.isEdit) {
-          this.loadItemData();
-        }
+        this.loadFpeIds();
+        this.loadConfigIds();
       }
     },
   },
   methods: {
-    resetForm() {
-      this.formData = {
-        jsonTransformId: "",
-        fpeId: "",
-        jsonPathFieldName: "",
-        transformType: "",
-      };
-      if (this.$refs.form) {
-        this.$refs.form.resetValidation();
+    async loadFpeIds() {
+      this.loadingFpeIds = true;
+      try {
+        const response = await voltageFpeService.getAll();
+        if (response.success) {
+          // Extract unique FPE IDs from the configurations
+          this.fpeIdOptions = [
+            ...new Set(response.data.map((config) => config.fpeId)),
+          ].filter(Boolean);
+        } else {
+          console.error("Failed to load FPE IDs:", response.error);
+          this.fpeIdOptions = [];
+        }
+      } catch (error) {
+        console.error("Error loading FPE IDs:", error);
+        this.fpeIdOptions = [];
+      } finally {
+        this.loadingFpeIds = false;
       }
     },
 
-    loadItemData() {
-      if (this.item) {
-        this.formData = {
-          jsonTransformId: this.item.jsonTransformId || "",
-          fpeId: this.item.fpeId || "",
-          jsonPathFieldName: this.item.jsonPathFieldName || "",
-          transformType: this.item.transformType || "",
-        };
+    async loadConfigIds() {
+      this.loadingConfigIds = true;
+      try {
+        const response = await configIdService.getAll();
+        if (response.success) {
+          // Extract unique Config IDs from the transform groups
+          this.configIdOptions = [
+            ...new Set(response.data.map((group) => group.configId)),
+          ].filter(Boolean);
+        } else {
+          console.error("Failed to load Config IDs:", response.error);
+          this.configIdOptions = [];
+        }
+      } catch (error) {
+        console.error("Error loading Config IDs:", error);
+        this.configIdOptions = [];
+      } finally {
+        this.loadingConfigIds = false;
+      }
+    },
+
+    resetForm() {
+      this.configId = "";
+      this.bulkItems = [
+        {
+          fpeId: "",
+          jsonPathFieldName: "",
+          transformType: "",
+        },
+      ];
+    },
+
+    addBulkRow() {
+      this.bulkItems.push({
+        fpeId: "",
+        jsonPathFieldName: "",
+        transformType: "",
+      });
+    },
+
+    removeBulkRow(index) {
+      if (this.bulkItems.length > 1) {
+        this.bulkItems.splice(index, 1);
       }
     },
 
     async save() {
-      if (!this.$refs.form.validate()) return;
-
       this.saving = true;
-
       try {
-        const payload = {
-          ...this.formData,
-        };
-
-        this.$emit("save", payload);
+        const dataToSave = this.validBulkItems.map((item) => ({
+          configId: this.configId,
+          fpeId: item.fpeId,
+          jsonPathFieldName: `$.${item.jsonPathFieldName}`,
+          transformType: item.transformType,
+        }));
+        this.$emit("bulk-save", dataToSave);
       } catch (error) {
-        console.error("Error saving:", error);
+        console.error("Error saving bulk:", error);
       } finally {
         this.saving = false;
       }

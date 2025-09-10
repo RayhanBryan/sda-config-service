@@ -92,19 +92,14 @@ export default {
           to: "/voltage-transform-config",
         },
         {
-          title: "Voltage Library",
-          icon: "mdi-library",
-          to: "/voltage-library",
-        },
-        {
           title: "Voltage FPE",
-          icon: "mdi-cog",
+          icon: "mdi-shield-check",
           to: "/voltage-fpe",
         },
         {
-          title: "Grup Transform",
-          icon: "mdi-group",
-          to: "/voltage-transform-group",
+          title: "Create Config ID",
+          icon: "mdi-plus-box",
+          to: "/create-config-id",
         },
       ],
     };

@@ -4,8 +4,8 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-h5">
-            <v-icon left>mdi-group</v-icon>
-            ID Grup Voltage Transform
+            <v-icon left>mdi-plus-box</v-icon>
+            Create Config ID
           </v-card-title>
 
           <v-card-text>
@@ -13,7 +13,7 @@
               <v-col cols="12" md="8">
                 <v-text-field
                   v-model="searchId"
-                  label="Cari berdasarkan ID"
+                  label="Search by ID"
                   variant="outlined"
                   prepend-inner-icon="mdi-magnify"
                   clearable
@@ -28,7 +28,7 @@
                   @click="openAddDialog"
                   block
                 >
-                  Tambah Grup
+                  Create New Config ID
                 </v-btn>
               </v-col>
             </v-row>
@@ -42,21 +42,21 @@
       <v-col cols="12">
         <v-card>
           <v-card-title>
-            <span class="text-h6">Grup Transform</span>
+            <span class="text-h6">Config IDs</span>
           </v-card-title>
 
           <v-data-table
             :headers="headers"
             :items="groups"
             :loading="loading"
-            item-key="jsonTransformId"
+            item-key="configId"
           >
-            <template v-slot:item.jsonTransformId="{ item }">
-              {{ item.jsonTransformId || "-" }}
+            <template v-slot:item.configId="{ item }">
+              {{ item.configId || "-" }}
             </template>
 
-            <template v-slot:item.name="{ item }">
-              {{ item.name || "-" }}
+            <template v-slot:item.description="{ item }">
+              {{ item.description || "-" }}
             </template>
 
             <template v-slot:item.createdBy="{ item }">
@@ -68,21 +68,36 @@
             </template>
 
             <template v-slot:item.actions="{ item }">
-              <v-btn
-                icon="mdi-delete"
-                size="small"
-                color="error"
-                variant="text"
-                @click="deleteItem(item)"
-              ></v-btn>
+              <div class="d-flex align-center justify-start">
+                <v-btn
+                  icon="mdi-delete"
+                  size="small"
+                  color="error"
+                  variant="text"
+                  @click="deleteItem(item)"
+                  :title="'Delete Config ID'"
+                  density="compact"
+                ></v-btn>
+                <v-divider vertical class="mx-2"></v-divider>
+                <v-btn
+                  icon="mdi-arrow-right"
+                  size="small"
+                  color="success"
+                  variant="text"
+                  @click="goToVoltageTransform(item)"
+                  :title="'Go to Transform Configuration'"
+                  density="compact"
+                  class="me-1"
+                ></v-btn>
+              </div>
             </template>
 
             <template v-slot:no-data>
               <div class="text-center pa-4">
                 <v-icon size="64" color="grey">mdi-database-search</v-icon>
-                <p class="text-grey mt-2">Tidak ada data tersedia</p>
+                <p class="text-grey mt-2">No Config ID available</p>
                 <p class="text-caption text-grey">
-                  Tambahkan grup baru untuk memulai
+                  Create a new Config ID to get started
                 </p>
               </div>
             </template>
@@ -94,28 +109,36 @@
     <!-- Add Group Dialog -->
     <v-dialog v-model="addDialog" max-width="500">
       <v-card>
-        <v-card-title class="text-h6">Tambah Grup Baru</v-card-title>
+        <v-card-title class="text-h6">Create New Config ID</v-card-title>
         <v-card-text>
           <v-text-field
             v-model="newGroupName"
-            label="Nama Grup"
+            label="Config ID Name"
             variant="outlined"
             required
-            :rules="[(v) => !!v || 'Nama grup wajib diisi']"
+            :rules="[(v) => !!v || 'Config ID name is required']"
+            class="mb-3"
           ></v-text-field>
+          <v-textarea
+            v-model="newGroupDescription"
+            label="Description (Optional)"
+            variant="outlined"
+            rows="3"
+            placeholder="Enter description for this Config ID..."
+          ></v-textarea>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="addDialog = false">
-            Batal
+            Cancel
           </v-btn>
           <v-btn
             color="success"
-            variant="text"
+            variant="elevated"
             @click="createGroup"
             :loading="creating"
           >
-            Tambah
+            Create
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -126,7 +149,7 @@
       <v-card>
         <v-card-title class="text-h6 text-success">
           <v-icon left color="success">mdi-check-circle</v-icon>
-          Grup Berhasil Ditambahkan
+          Config ID Successfully Created
         </v-card-title>
         <v-card-text>
           <div class="text-center pa-4">
@@ -134,9 +157,10 @@
               >mdi-check-circle-outline</v-icon
             >
             <p class="text-h6 mb-2">
-              Group "{{ createdGroup?.name }}" berhasil ditambahkan!
+              Config ID "{{ createdGroup?.name }}" has been created
+              successfully!
             </p>
-            <p class="text-body-1 mb-4">JSON Transform ID:</p>
+            <p class="text-body-1 mb-4">Config ID:</p>
             <div class="d-flex align-center justify-center gap-2">
               <v-chip
                 color="primary"
@@ -144,21 +168,21 @@
                 size="large"
                 class="ma-2 px-4"
               >
-                {{ createdGroup?.jsonTransformId }}
+                {{ createdGroup?.configId }}
               </v-chip>
               <v-btn
                 color="primary"
                 variant="outlined"
                 prepend-icon="mdi-content-copy"
-                @click="copyToClipboard(createdGroup?.jsonTransformId)"
+                @click="copyToClipboard(createdGroup?.configId)"
                 size="small"
               >
-                Salin
+                Copy
               </v-btn>
             </div>
             <p class="text-caption text-grey mt-4">
-              Klik "Pergi ke Konfigurasi Detail" untuk menambahkan konfigurasi
-              detail menggunakan JSON Transform ID ini.
+              Click "Go to Configuration Detail" to add detail configuration
+              using this Config ID.
             </p>
           </div>
         </v-card-text>
@@ -169,7 +193,7 @@
             prepend-icon="mdi-arrow-right"
             @click="goToDetailConfig"
           >
-            Pergi ke Konfigurasi Detail
+            Go to Configuration Detail
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
@@ -186,24 +210,24 @@
     <!-- Delete Confirmation Dialog -->
     <v-dialog v-model="deleteDialog" max-width="600">
       <v-card>
-        <v-card-title class="text-h6">Konfirmasi Hapus</v-card-title>
+        <v-card-title class="text-h6">Delete Confirmation</v-card-title>
         <v-card-text>
           <v-alert type="warning" variant="tonal" class="mb-4">
-            <v-alert-title>Peringatan</v-alert-title>
-            Menghapus JSON Transform ID ini juga akan menghapus semua
-            konfigurasi detail yang mengandung JSON Transform ID yang dipilih.
+            <v-alert-title>Warning</v-alert-title>
+            Deleting this Config ID will also delete all detail configurations
+            that contain the selected Config ID.
           </v-alert>
 
-          <p>Apakah Anda yakin ingin menghapus grup voltage transform ini?</p>
+          <p>Are you sure you want to delete this Config ID?</p>
           <p class="text-caption text-grey">
-            Tindakan ini tidak dapat dibatalkan dan akan mempengaruhi
-            konfigurasi detail yang terkait.
+            This action cannot be undone and will affect related detail
+            configurations.
           </p>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="grey" variant="text" @click="deleteDialog = false">
-            Batal
+            Cancel
           </v-btn>
           <v-btn
             color="error"
@@ -211,7 +235,7 @@
             @click="confirmDelete"
             :loading="deleting"
           >
-            Tetap Hapus
+            Delete Anyway
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -227,7 +251,7 @@
       {{ snackbar.message }}
       <template v-slot:actions>
         <v-btn color="white" variant="text" @click="snackbar.show = false">
-          Tutup
+          Close
         </v-btn>
       </template>
     </v-snackbar>
@@ -235,10 +259,10 @@
 </template>
 
 <script>
-import voltageTransformGroupService from "../../services/voltageTransformGroupService";
+import configIdService from "../../services/configIdService";
 
 export default {
-  name: "VoltageTransformGroupList",
+  name: "CreateConfigId",
   data() {
     return {
       loading: false,
@@ -250,19 +274,37 @@ export default {
       selectedItem: null,
       searchId: "",
       newGroupName: "",
+      newGroupDescription: "",
       createdGroup: null,
       groups: [],
       allGroups: [], // Store all data for filtering
       headers: [
         {
-          title: "JSON Transform ID",
-          value: "jsonTransformId",
+          title: "Config ID",
+          value: "configId",
           sortable: true,
         },
-        { title: "Nama", value: "name", sortable: true },
-        { title: "Dibuat Oleh", value: "createdBy", sortable: true },
-        { title: "Dibuat Pada", value: "createdAt", sortable: true },
-        { title: "Aksi", value: "actions", sortable: false, width: "100" },
+        {
+          title: "Description",
+          value: "description",
+          sortable: true,
+        },
+        {
+          title: "Created By",
+          value: "createdBy",
+          sortable: true,
+        },
+        {
+          title: "Created At",
+          value: "createdAt",
+          sortable: true,
+        },
+        {
+          title: "Actions",
+          value: "actions",
+          sortable: false,
+          width: "140",
+        },
       ],
       snackbar: {
         show: false,
@@ -290,36 +332,39 @@ export default {
       // Filter data locally
       const searchTerm = this.searchId.trim().toLowerCase();
       this.groups = this.allGroups.filter((group) =>
-        group.jsonTransformId?.toLowerCase().includes(searchTerm)
+        group.configId?.toLowerCase().includes(searchTerm)
       );
     },
 
     openAddDialog() {
       this.newGroupName = "";
+      this.newGroupDescription = "";
       this.addDialog = true;
     },
 
     async createGroup() {
       if (!this.newGroupName?.trim()) {
-        this.showSnackbar("Silakan masukkan nama grup", "warning");
+        this.showSnackbar("Please enter a Config ID name", "warning");
         return;
       }
 
       this.creating = true;
       try {
-        const response = await voltageTransformGroupService.create({
-          name: this.newGroupName.trim(),
+        const response = await configIdService.create({
+          prefix: this.newGroupName,
+          description: this.newGroupDescription || null,
         });
 
         if (response.success) {
           // Store the created group data
           this.createdGroup = {
             name: this.newGroupName.trim(),
-            jsonTransformId: response.data?.message || response.message,
+            configId: response.data?.message || response.message,
           };
 
           this.addDialog = false;
           this.newGroupName = "";
+          this.newGroupDescription = "";
 
           // Show success dialog
           this.successDialog = true;
@@ -327,11 +372,14 @@ export default {
           // Reload data to show the new group
           await this.loadAllGroups();
         } else {
-          this.showSnackbar("Gagal membuat grup", "error");
+          this.showSnackbar("Failed to create Config ID", "error");
         }
       } catch (error) {
         console.error("Error creating group:", error);
-        this.showSnackbar("Terjadi kesalahan saat membuat grup", "error");
+        this.showSnackbar(
+          "An error occurred while creating Config ID",
+          "error"
+        );
       } finally {
         this.creating = false;
       }
@@ -340,20 +388,20 @@ export default {
     async loadAllGroups() {
       this.loading = true;
       try {
-        const response = await voltageTransformGroupService.getAll();
+        const response = await configIdService.getAll();
         console.log("Loaded groups:", response);
         if (response.success) {
           this.allGroups = response.data || [];
           this.groups = [...this.allGroups]; // Show all data initially
           if (this.allGroups.length > 0) {
-            this.showSnackbar("Data berhasil dimuat", "success");
+            this.showSnackbar("Data loaded successfully", "success");
           }
         } else {
-          this.showSnackbar("Gagal memuat data", "error");
+          this.showSnackbar("Failed to load data", "error");
         }
       } catch (error) {
         console.error("Error loading all groups:", error);
-        this.showSnackbar("Terjadi kesalahan saat memuat data", "error");
+        this.showSnackbar("An error occurred while loading data", "error");
       } finally {
         this.loading = false;
       }
@@ -365,30 +413,31 @@ export default {
     },
 
     async confirmDelete() {
-      if (!this.selectedItem?.jsonTransformId) return;
+      if (!this.selectedItem?.configId) return;
 
       this.deleting = true;
       try {
-        const response = await voltageTransformGroupService.deleteById(
-          this.selectedItem.jsonTransformId
+        const response = await configIdService.deleteById(
+          this.selectedItem.configId
         );
         if (response.success) {
-          this.showSnackbar("Grup berhasil dihapus", "success");
+          this.showSnackbar("Config ID deleted successfully", "success");
           // Remove from both arrays
           this.groups = this.groups.filter(
-            (group) =>
-              group.jsonTransformId !== this.selectedItem.jsonTransformId
+            (group) => group.configId !== this.selectedItem.configId
           );
           this.allGroups = this.allGroups.filter(
-            (group) =>
-              group.jsonTransformId !== this.selectedItem.jsonTransformId
+            (group) => group.configId !== this.selectedItem.configId
           );
         } else {
-          this.showSnackbar("Gagal menghapus grup", "error");
+          this.showSnackbar("Failed to delete Config ID", "error");
         }
       } catch (error) {
         console.error("Error deleting group:", error);
-        this.showSnackbar("Terjadi kesalahan saat menghapus grup", "error");
+        this.showSnackbar(
+          "An error occurred while deleting Config ID",
+          "error"
+        );
       } finally {
         this.deleting = false;
         this.deleteDialog = false;
@@ -402,11 +451,19 @@ export default {
       this.snackbar.show = true;
     },
 
+    goToVoltageTransform(item) {
+      // Navigate to voltage transform page and pass the config ID
+      this.$router.push({
+        path: "/voltage-transform-config",
+        query: { configId: item.configId },
+      });
+    },
+
     async copyToClipboard(text) {
       try {
         await navigator.clipboard.writeText(text);
         this.showSnackbar(
-          "JSON Transform ID berhasil disalin ke clipboard!",
+          "Config ID successfully copied to clipboard!",
           "success"
         );
       } catch (error) {
@@ -419,11 +476,11 @@ export default {
         try {
           document.execCommand("copy");
           this.showSnackbar(
-            "JSON Transform ID berhasil disalin ke clipboard!",
+            "Config ID successfully copied to clipboard!",
             "success"
           );
         } catch (fallbackError) {
-          this.showSnackbar("Gagal menyalin ke clipboard", "error");
+          this.showSnackbar("Failed to copy to clipboard", "error");
         }
         document.body.removeChild(textArea);
       }
@@ -434,7 +491,6 @@ export default {
       this.successDialog = false;
 
       // Navigate to detail transform config page
-      // You can pass the JSON Transform ID as a parameter if needed
       this.$router.push("/voltage-transform-config");
     },
 
