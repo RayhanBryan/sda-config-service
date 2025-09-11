@@ -46,7 +46,7 @@
               <v-text-field
                 v-model="username"
                 :rules="usernameRules"
-                placeholder="hilman"
+                placeholder="username"
                 variant="outlined"
                 color="primary"
                 density="comfortable"
