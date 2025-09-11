@@ -6,7 +6,6 @@
         <v-list-item
           :prepend-avatar="currentUser?.avatar"
           :title="currentUser?.name || 'User'"
-          :subtitle="currentUser?.email || 'No email'"
         ></v-list-item>
       </v-list>
 
@@ -90,64 +89,54 @@ export default {
     },
   },
   emits: ["update:modelValue"],
-  setup(props, { emit }) {
-    const router = useRouter();
-    const route = useRoute();
-    const auth = useAuth();
-
-    const selectedItem = computed(() => {
-      const path = route.path;
+  data() {
+    return {
+      router: useRouter(),
+      route: useRoute(),
+      auth: useAuth(),
+    };
+  },
+  mounted() {
+    // Close drawer on route change (for better UX on mobile)
+  },
+  computed: {
+    drawer: {
+      get() {
+        return this.modelValue;
+      },
+      set(value) {
+        this.$emit("update:modelValue", value);
+      },
+    },
+    isLoggedIn() {
+      return this.auth.isLoggedIn;
+    },
+    currentUser() {
+      return this.auth.currentUser;
+    },
+    currentRoutePath() {
+      return this.route.path;
+    },
+    selectedItem() {
+      const path = this.route.path;
       if (path === "/create-config-id") return ["create-config-id"];
       if (path === "/voltage-fpe") return ["voltage-fpe"];
       if (path === "/voltage-transform-config")
         return ["voltage-transform-config"];
       return [];
-    });
-
-    const drawer = computed({
-      get() {
-        return props.modelValue;
-      },
-      set(value) {
-        emit("update:modelValue", value);
-      },
-    });
-
-    const isLoggedIn = computed(() => auth.isLoggedIn);
-    const currentUser = computed(() => auth.currentUser);
-    const currentRoutePath = computed(() => route.path);
-
-    const isActiveRoute = (routePath) => {
-      return currentRoutePath.value === routePath;
-    };
-
-    const navigateTo = (path) => {
-      router.push(path);
-    };
-
-    const handleLogout = () => {
-      auth.logout();
-      router.push("/login");
-    };
-
-    // Debug: watch route changes
-    watch(
-      () => route.path,
-      (newPath) => {
-        console.log("NavigationDrawer: Route changed to:", newPath);
-      }
-    );
-
-    return {
-      drawer,
-      selectedItem,
-      isLoggedIn,
-      currentUser,
-      currentRoutePath,
-      isActiveRoute,
-      navigateTo,
-      handleLogout,
-    };
+    },
+  },
+  methods: {
+    isActiveRoute(routePath) {
+      return this.currentRoutePath === routePath;
+    },
+    navigateTo(path) {
+      this.router.push(path);
+    },
+    handleLogout() {
+      this.auth.logout();
+      this.router.push("/login");
+    },
   },
 };
 </script>
