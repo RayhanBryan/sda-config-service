@@ -52,7 +52,18 @@
             item-key="configId"
           >
             <template v-slot:item.configId="{ item }">
-              {{ item.configId || "-" }}
+              <div class="d-flex align-center">
+                <span class="me-2">{{ item.configId || "-" }}</span>
+                <v-btn
+                  icon="mdi-content-copy"
+                  size="x-small"
+                  color="primary"
+                  variant="text"
+                  @click="copyToClipboard(item.configId)"
+                  :title="'Copy Config ID'"
+                  density="compact"
+                ></v-btn>
+              </div>
             </template>
 
             <template v-slot:item.description="{ item }">
@@ -452,10 +463,13 @@ export default {
     },
 
     goToVoltageTransform(item) {
-      // Navigate to voltage transform page and pass the config ID
+      // Navigate to voltage transform page and pass the config ID for auto search
       this.$router.push({
         path: "/voltage-transform-config",
-        query: { configId: item.configId },
+        query: {
+          configId: item.configId,
+          autoSearch: "true",
+        },
       });
     },
 

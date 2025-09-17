@@ -31,16 +31,6 @@ const routes = [
     },
   },
   {
-    path: "/voltage-library",
-    name: "VoltageLibrary",
-    component: () =>
-      import("../components/voltage-library/VoltageLibraryList.vue"),
-    meta: {
-      title: "Voltage Library - SDA Configuration Service",
-      requiresAuth: true,
-    },
-  },
-  {
     path: "/voltage-fpe",
     name: "VoltageFpe",
     component: () => import("../components/voltage-fpe/VoltageFpeList.vue"),

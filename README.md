@@ -26,9 +26,6 @@ src/
 │   ├── voltage-fpe/              # Voltage FPE management
 │   │   ├── VoltageFpeDialog.vue  # FPE configuration dialog
 │   │   └── VoltageFpeList.vue    # FPE list view
-│   ├── voltage-library/          # Voltage library management
-│   │   ├── VoltageLibraryDialog.vue
-│   │   └── VoltageLibraryList.vue
 │   ├── voltage-transform/        # Voltage transformation configs
 │   │   ├── VoltageConfigDialog.vue
 │   │   └── VoltageTransformList.vue
@@ -37,7 +34,7 @@ src/
 ├── services/                    # API service layer
 │   ├── api.js                  # Base API configuration
 │   ├── voltageFpeService.js    # FPE API endpoints
-│   ├── voltageLibraryService.js # Library API endpoints
+│   ├── voltageLibraryService.js # Library API endpoints (used by FPE)
 │   ├── voltageTransformService.js # Transform API endpoints
 │   └── configIdService.js
 ├── router/                     # Vue Router configuration
@@ -94,11 +91,6 @@ npm run preview
 
 - **VoltageFpeList**: View and manage FPE configurations
 - **VoltageFpeDialog**: Create/edit FPE settings
-
-### Voltage Library
-
-- **VoltageLibraryList**: Browse voltage library entries
-- **VoltageLibraryDialog**: Add/modify library items
 
 ### Voltage Transform
 

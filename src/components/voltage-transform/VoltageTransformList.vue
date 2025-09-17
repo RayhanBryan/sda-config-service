@@ -11,51 +11,53 @@
           <v-card-text>
             <v-row>
               <!-- Search and Filter Section -->
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="6">
                 <v-text-field
                   v-model="searchTerm"
                   label="Search by Config ID"
                   prepend-inner-icon="mdi-magnify"
                   variant="outlined"
-                  density="compact"
+                  density="comfortable"
                   hide-details
                   clearable
                   @input="filterBySearch"
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12" md="2">
+              <v-col cols="12" md="6">
                 <v-text-field
                   v-model="fpeIdFilter"
                   label="Filter by FPE ID"
                   prepend-inner-icon="mdi-filter"
                   variant="outlined"
-                  density="compact"
+                  density="comfortable"
                   hide-details
                   clearable
                   @input="filterByFpeId"
                 ></v-text-field>
               </v-col>
 
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="6">
                 <v-btn
                   color="primary"
                   variant="elevated"
                   prepend-icon="mdi-plus-box-multiple"
                   @click="openBulkCreateDialog"
                   block
+                  size="large"
                 >
                   Add Configuration
                 </v-btn>
               </v-col>
 
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="6">
                 <v-btn
                   color="error"
                   variant="elevated"
                   prepend-icon="mdi-delete"
                   @click="openDeleteByIdDialog"
                   block
+                  size="large"
                 >
                   Delete by ID
                 </v-btn>
@@ -76,13 +78,38 @@
             :loading="loading"
             item-key="id"
           >
+            <template v-slot:item.configId="{ item }">
+              <div class="d-flex align-center">
+                <span class="me-2">{{ item.configId }}</span>
+                <v-btn
+                  icon="mdi-content-copy"
+                  size="x-small"
+                  color="primary"
+                  variant="text"
+                  @click="copyToClipboard(item.configId)"
+                  :title="'Copy Config ID'"
+                  density="compact"
+                ></v-btn>
+              </div>
+            </template>
+
             <template v-slot:item.actions="{ item }">
+              <v-btn
+                icon="mdi-pencil"
+                size="small"
+                color="primary"
+                variant="text"
+                @click="handleEditClick(item)"
+                class="me-2"
+                :title="'Edit Configuration'"
+              ></v-btn>
               <v-btn
                 icon="mdi-delete"
                 size="small"
                 color="error"
                 variant="text"
                 @click="deleteItem(item)"
+                :title="'Delete Configuration'"
               ></v-btn>
             </template>
 
@@ -165,43 +192,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Delete by ID Dialog -->
-    <v-dialog v-model="deleteByIdDialog" max-width="500">
-      <v-card>
-        <v-card-title class="text-h6">Delete by ID</v-card-title>
-        <v-card-text>
-          <v-text-field
-            v-model="deleteById"
-            label="Enter Config ID to delete"
-            variant="outlined"
-            placeholder="example: transform-001"
-            :rules="[(v) => !!v || 'ID is required']"
-          ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="grey" variant="text" @click="deleteByIdDialog = false">
-            Cancel
-          </v-btn>
-          <v-btn
-            color="error"
-            variant="text"
-            @click="confirmDeleteById"
-            :disabled="!deleteById"
-          >
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Voltage Config Dialog -->
-    <VoltageConfigDialog
-      v-model="dialog"
-      @bulk-save="handleBulkSave"
-      @cancel="handleCancel"
-    />
-
     <!-- Snackbar for notifications -->
     <v-snackbar
       v-model="snackbar.show"
@@ -237,6 +227,8 @@ export default {
       deleteDialog: false,
       deleteByIdDialog: false,
       deleteById: "",
+      isEdit: false,
+      isBulkMode: false,
       selectedItem: null,
       configurations: [],
       allConfigurations: [], // Store all configurations for filtering
@@ -249,7 +241,7 @@ export default {
         { title: "Field Name", value: "fpeId", sortable: true },
         { title: "JSON Path", value: "jsonPathFieldName", sortable: true },
         { title: "Transform Type", value: "transformType", sortable: true },
-        { title: "Actions", value: "actions", sortable: false, width: "120" },
+        { title: "Actions", value: "actions", sortable: false, width: "150" },
       ],
       bulkHeaders: [
         { title: "Config ID", value: "configId", width: "250" },
@@ -273,6 +265,12 @@ export default {
   computed: {
     filteredConfigurations() {
       let filtered = this.allConfigurations;
+      console.log(
+        "Filtering with searchTerm:",
+        this.searchTerm,
+        "allConfigurations:",
+        this.allConfigurations.length
+      );
 
       // Filter by search term
       if (this.searchTerm) {
@@ -283,6 +281,7 @@ export default {
               .toLowerCase()
               .includes(this.searchTerm.toLowerCase())
         );
+        console.log("Filtered by search:", filtered.length, "items");
       }
 
       // Filter by FPE ID
@@ -292,6 +291,7 @@ export default {
             config.fpeId &&
             config.fpeId.toLowerCase().includes(this.fpeIdFilter.toLowerCase())
         );
+        console.log("Filtered by FPE:", filtered.length, "items");
       }
 
       this.configurations = filtered;
@@ -299,12 +299,17 @@ export default {
     },
   },
   mounted() {
-    this.loadConfigurations();
+    // Check if auto search is requested with configId
+    if (this.$route.query.autoSearch === "true" && this.$route.query.configId) {
+      this.searchTerm = this.$route.query.configId;
+    }
 
     // Check if FPE ID is provided in query parameter
     if (this.$route.query.fpeId) {
       this.fpeIdFilter = this.$route.query.fpeId;
     }
+
+    this.loadConfigurations();
   },
   methods: {
     async loadConfigurations() {
@@ -346,12 +351,22 @@ export default {
       this.deleteDialog = true;
     },
 
+    handleEditClick(item) {
+      this.selectedItem = { ...item };
+      this.isEdit = true;
+      this.isBulkMode = false;
+      this.dialog = true;
+    },
+
     openDeleteByIdDialog() {
       this.deleteById = "";
       this.deleteByIdDialog = true;
     },
 
     openBulkCreateDialog() {
+      this.selectedItem = null;
+      this.isEdit = false;
+      this.isBulkMode = true;
       this.dialog = true;
     },
 
@@ -411,15 +426,15 @@ export default {
           this.selectedItem.jsonPathFieldName
         );
         if (response.success) {
-          this.showSnackbar("Konfigurasi berhasil dihapus", "success");
+          this.showSnackbar("Configuration deleted successfully", "success");
           await this.loadConfigurations();
         } else {
-          this.showSnackbar("Gagal menghapus konfigurasi", "error");
+          this.showSnackbar("Failed to delete configuration", "error");
         }
       } catch (error) {
         console.error("Error deleting configuration:", error);
         this.showSnackbar(
-          "Terjadi kesalahan saat menghapus konfigurasi",
+          "An error occurred while deleting configuration",
           "error"
         );
       } finally {
@@ -439,20 +454,20 @@ export default {
 
         if (response.success) {
           this.showSnackbar(
-            `Konfigurasi berhasil ${this.isEdit ? "diperbarui" : "dibuat"}`,
+            `Configuration ${this.isEdit ? "updated" : "created"} successfully`,
             "success"
           );
           await this.loadConfigurations();
         } else {
           this.showSnackbar(
-            `Gagal ${this.isEdit ? "memperbarui" : "membuat"} konfigurasi`,
+            `Failed to ${this.isEdit ? "update" : "create"} configuration`,
             "error"
           );
         }
       } catch (error) {
         console.error("Error saving configuration:", error);
         this.showSnackbar(
-          "Terjadi kesalahan saat menyimpan konfigurasi",
+          "An error occurred while saving configuration",
           "error"
         );
       } finally {
@@ -463,6 +478,9 @@ export default {
 
     handleCancel() {
       this.dialog = false;
+      this.isEdit = false;
+      this.isBulkMode = false;
+      this.selectedItem = null;
     },
 
     getTransformTypeColor(transformType) {
@@ -486,6 +504,33 @@ export default {
       this.snackbar.message = message;
       this.snackbar.color = color;
       this.snackbar.show = true;
+    },
+
+    async copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        this.showSnackbar(
+          "Config ID successfully copied to clipboard!",
+          "success"
+        );
+      } catch (error) {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+          document.execCommand("copy");
+          this.showSnackbar(
+            "Config ID successfully copied to clipboard!",
+            "success"
+          );
+        } catch (fallbackError) {
+          this.showSnackbar("Failed to copy to clipboard", "error");
+        }
+        document.body.removeChild(textArea);
+      }
     },
   },
 };
